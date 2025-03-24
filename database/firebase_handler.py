@@ -18,3 +18,17 @@ def update_user_language(chat_id, language):
     """Update the user's language preference in Firestore."""
     user_ref = db.collection('users').document(str(chat_id))
     user_ref.update({'language': language})
+
+def get_crop_info(crop_name):
+    """Fetch crop information from Firestore."""
+    doc_ref = db.collection("Crops").document(crop_name)
+    doc = doc_ref.get()
+    if doc.exists:
+        return doc.to_dict().get("info", "No data available for this crop.")
+    else:
+        return "Crop not found in the database."
+def handle_intent(intent_name, user_message):
+    if intent_name.startswith("Crop-"):
+        crop_name = intent_name.replace("Crop-", "")  # Extract crop name
+        return get_crop_info(crop_name)
+    return "I'm still learning! Please ask about Ethiopian crops."
